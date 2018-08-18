@@ -20,9 +20,10 @@ import { LoginComponent } from './login/login.component';
 import { RegisterComponent } from './login/register.component';
 
 import { FormsModule } from '@angular/forms';
+// import { SettingsService } from './services/service.index';
 // import { GraficoDonaComponent } from './components/grafico-dona/grafico-dona.component';
 
-
+import {ServiceModule} from './services/service.module';
 
 @NgModule({
   declarations: [
@@ -40,7 +41,7 @@ import { FormsModule } from '@angular/forms';
 
   ],
   imports: [
-    BrowserModule, APP_ROUTES, PagesModule, FormsModule
+    BrowserModule, APP_ROUTES, PagesModule, FormsModule, ServiceModule
   ],
   providers: [],
   bootstrap: [AppComponent]
