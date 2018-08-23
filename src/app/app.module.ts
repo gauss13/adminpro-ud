@@ -19,7 +19,7 @@ import { LoginComponent } from './login/login.component';
 // import { PagesComponent } from './pages/pages.component';
 import { RegisterComponent } from './login/register.component';
 
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // import { SettingsService } from './services/service.index';
 // import { GraficoDonaComponent } from './components/grafico-dona/grafico-dona.component';
 
@@ -41,7 +41,7 @@ import {ServiceModule} from './services/service.module';
 
   ],
   imports: [
-    BrowserModule, APP_ROUTES, PagesModule, FormsModule, ServiceModule
+    BrowserModule, APP_ROUTES, PagesModule, FormsModule, ServiceModule,ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
