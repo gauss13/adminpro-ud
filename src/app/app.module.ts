@@ -24,6 +24,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 // import { GraficoDonaComponent } from './components/grafico-dona/grafico-dona.component';
 
 import {ServiceModule} from './services/service.module';
+// import { ImagenPipe } from './pipes/imagen.pipe'; no lo ocupamos aqui se menajara desde un modulo por separado
 
 @NgModule({
   declarations: [
@@ -38,6 +39,7 @@ import {ServiceModule} from './services/service.module';
     // BreadcrumbsComponent,
     // PagesComponent,
     RegisterComponent
+    // ImagenPipe
 
   ],
   imports: [
