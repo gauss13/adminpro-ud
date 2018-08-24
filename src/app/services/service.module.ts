@@ -9,6 +9,7 @@ import {
   LoginGuardGuard, 
   SubirArchivoService} from './service.index';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { ModalUploadService } from '../components/modal-upload/modal-upload.service';
 
 
 
@@ -23,7 +24,8 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
     SidebarService, 
     UsuarioService, 
     LoginGuardGuard, 
-    SubirArchivoService
+    SubirArchivoService,
+    ModalUploadService
   ],
   declarations: []
 })
