@@ -20,7 +20,6 @@ export class UsuarioService {
   public _subirArchivoService: SubirArchivoService) {
     // lo ejecutamos cada ves que el servicio de inicializa
     this.cargarStorage();
-    console.log('Servicio de usuario listo');
   }
 
   estaLogueado() {
@@ -165,6 +164,7 @@ buscarUsuarios( termino: string) {
 
 
 borrarUsuario(id) {
+  
   let url = URL_SERVICIOS + '/usuario/' + id + '?token=' + this.token;
 
   return this.http.delete(url).pipe(

@@ -25,6 +25,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import {ServiceModule} from './services/service.module';
 
+
 // import { ImagenPipe } from './pipes/imagen.pipe'; no lo ocupamos aqui se menajara desde un modulo por separado
 
 @NgModule({
@@ -40,6 +41,7 @@ import {ServiceModule} from './services/service.module';
     // BreadcrumbsComponent,
     // PagesComponent,
     RegisterComponent,
+
     
     // ImagenPipe
 

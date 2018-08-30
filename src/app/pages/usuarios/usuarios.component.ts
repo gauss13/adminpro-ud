@@ -3,7 +3,7 @@ import { Usuario } from '../../models/usuario.model';
 import { UsuarioService } from '../../services/service.index';
 import { ModalUploadService } from '../../components/modal-upload/modal-upload.service';
 
-var swal: any;
+declare var swal: any;
 
 @Component({
   selector: 'app-usuarios',
@@ -123,7 +123,7 @@ borrarUsuario(usuario: Usuario) {
 
   });
 
-  }// borrar usuario
+}// borrar usuario
 
 
   guardarUsuario(usuario: Usuario) {
