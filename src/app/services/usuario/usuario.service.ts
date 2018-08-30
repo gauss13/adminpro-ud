@@ -1,11 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Usuario } from '../../models/usuario.model';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { URL_SERVICIOS } from '../../config/config';
 
-import { map } from 'rxjs/operators'; // version 6 en adelante
+import { map,  catchError } from 'rxjs/operators'; // version 6 en adelante
 import { Router } from '@angular/router';
 import { SubirArchivoService } from '../subirArchivo/subir-archivo.service';
+import { throwError,  Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +16,7 @@ export class UsuarioService {
   // Propiedades de la clase, para saber si el usuario esta o no autenticado
   usuario: Usuario;
   token: string;
-
+menu: any[]= [];
   constructor(public http: HttpClient, public router: Router,
   public _subirArchivoService: SubirArchivoService) {
     // lo ejecutamos cada ves que el servicio de inicializa
@@ -30,21 +31,25 @@ export class UsuarioService {
      if( localStorage.getItem('token'))  {
        this.token = localStorage.getItem('token');
        this.usuario = JSON.parse( localStorage.getItem('usuario'));
+       this.menu = JSON.parse( localStorage.getItem('menu'));
 
      } else {
        this.token = '';
        this.usuario = null;
+       this.menu = [];
      }
   }
 
-  guardarStorage(id: string, token: string, usuario: Usuario) {
+  guardarStorage(id: string, token: string, usuario: Usuario, menu: any) {
 
     localStorage.setItem('id', id);
     localStorage.setItem('token', token);
     localStorage.setItem('usuario', JSON.stringify(usuario));
+    localStorage.setItem('menu', JSON.stringify(menu));
 
     this.usuario = usuario;
     this.token = token;
+    this.menu = menu;
 
   }
 
@@ -52,9 +57,11 @@ export class UsuarioService {
   logout() {
     this.usuario = null;
     this.token = '';
+    this.menu =[];
 
     localStorage.removeItem('token');
     localStorage.removeItem('usuario');
+    localStorage.removeItem('menu');
 
     this.router.navigate(['/login']);
   }
@@ -64,7 +71,7 @@ export class UsuarioService {
 
     return this.http.post(url, {token: tokenGoogle}).pipe(
       map((resp: any )=> {
-        this.guardarStorage(resp.id, resp.token, resp.usuario);
+        this.guardarStorage(resp.id, resp.token, resp.usuario, resp.menu);
         return true;
       })
     );
@@ -83,15 +90,36 @@ export class UsuarioService {
     return this.http.post(url, usuario).pipe(
       map((resp: any) => {
 
-        this.guardarStorage(resp.id, resp.token, resp.usuario);
-        // localStorage.setItem('id', resp.id);
-        // localStorage.setItem('token', resp.token);
-        // localStorage.setItem('usuario', JSON.stringify(resp.usuario));
+        this.guardarStorage(resp.id, resp.token, resp.usuario, resp.menu);
+          return true;
+      }) ,
+     catchError( err => {
+      //  return Observable.throw(err);
 
-        return true;
-      })
+      // console.log(err.error);
+swal('Errro en el login', err.error.mensaje,'warning');
+
+      return throwError(err);
+     } )     
     );
   }
+
+  private handleError(error: HttpErrorResponse) {
+    if (error.error instanceof ErrorEvent) {
+      // A client-side or network error occurred. Handle it accordingly.
+      console.error('An error occurred:', error.error.message);
+    } else {
+      // The backend returned an unsuccessful response code.
+      // The response body may contain clues as to what went wrong,
+      console.error(
+        `Backend returned code ${error.status}, ` +
+        `body was: ${error.error}`);
+    }
+    // return an observable with a user-facing error message
+    return throwError (
+      'Something bad happened; please try again later.');
+  }
+
 
   crearUsuario(usuario: Usuario) {
     const url = URL_SERVICIOS + '/usuario';
@@ -101,7 +129,15 @@ export class UsuarioService {
       map((resp: any) => {
         swal('Usuario creado', usuario.email, 'success');
         return resp.usuario;
-      })
+      }),
+      catchError( err => {
+        //  return Observable.throw(err);
+  
+        // console.log(err.error);
+  swal(err.error.mensaje, err.error.errors.message,'warning');
+  
+        return throwError(err);
+       } )
     );
   }
 
@@ -115,15 +151,23 @@ actualizarUsuario(usuario: Usuario) {
     // si el usuario de la sesion es el mismo que actualizo sus datos
     // entonces carganos los datos a local storage
     if ( usuario._id === this.usuario._id) {
-        let usuarioDB: Usuario = resp.usuario;
+        const usuarioDB: Usuario = resp.usuario;
 
-        this.guardarStorage(resp.usuario._id, this.token, usuarioDB);
+        this.guardarStorage(resp.usuario._id, this.token, usuarioDB, this.menu);
     }
  
     swal('Usuario Actualizado', usuario.nombre, 'success');
 
     return true;
-   })
+   }),
+   catchError( err => {
+    //  return Observable.throw(err);
+
+    // console.log(err.error);
+swal(err.error.mensaje, err.error.errors.message,'warning');
+
+    return throwError(err);
+   } )
  );
 
 }
@@ -136,7 +180,7 @@ cambiarImagen(archivo: File, id: string) {
     this.usuario.img = resp.usuario.img;
     swal('Imagen Actualizada', this.usuario.nombre, 'success');
 
-    this.guardarStorage(id, this.token, this.usuario);
+    this.guardarStorage(id, this.token, this.usuario, this.menu);
   })
   .catch( err => {
     console.log(err);
@@ -146,14 +190,14 @@ cambiarImagen(archivo: File, id: string) {
 
 cargarUsuarios(desde: number = 0) {
   
-  let url = URL_SERVICIOS + '/usuario?desde='+ desde;
+  const url = URL_SERVICIOS + '/usuario?desde='+ desde;
   return this.http.get(url);
 
 }
 
 buscarUsuarios( termino: string) {
  
-  let url = URL_SERVICIOS + '/busqueda/coleccion/usuario/' + termino;
+  const url = URL_SERVICIOS + '/busqueda/coleccion/usuario/' + termino;
 
   return this.http.get(url).pipe(
     map((resp: any) => {
@@ -165,7 +209,7 @@ buscarUsuarios( termino: string) {
 
 borrarUsuario(id) {
   
-  let url = URL_SERVICIOS + '/usuario/' + id + '?token=' + this.token;
+  const url = URL_SERVICIOS + '/usuario/' + id + '?token=' + this.token;
 
   return this.http.delete(url).pipe(
     map(resp => {
