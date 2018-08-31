@@ -64,8 +64,7 @@ const salida = {
       map( resp => resp.valor ),
       filter((valor, index) => {
       
-      if((valor % 2 == 1))
-      {
+      if((valor % 2 === 1)) {
         return true;
       } else {
         return false;

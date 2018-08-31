@@ -6,7 +6,7 @@ import { Graficas1Component } from './graficas1/graficas1.component';
 import { AccountSettingsComponent } from './account-settings/account-settings.component';
 import { PromesasComponent } from './promesas/promesas.component';
 import { RxjsComponent } from './rxjs/rxjs.component';
-import { LoginGuardGuard, AdminGuard } from '../services/service.index';
+import { LoginGuardGuard, AdminGuard, VerificaTokenGuard } from '../services/service.index';
 import { ProfileComponent } from './profile/profile.component';
 import { UsuariosComponent } from './usuarios/usuarios.component';
 import { HospitalesComponent } from './hospitales/hospitales.component';
@@ -17,12 +17,13 @@ import { BusquedaComponent } from './busqueda/busqueda.component';
 
 
 const pagesRoutes: Routes = [
-    {
-        path: '',
-        component: PagesComponent,
-        canActivate:[LoginGuardGuard],
-        children: [
-            {path: 'dashboard', component: DashboardComponent, data:{titulo:'Dashboard'} },
+   
+            {
+                path: 'dashboard', 
+                component: DashboardComponent, 
+                data:{titulo:'Dashboard'},
+                canActivate:[VerificaTokenGuard]
+             },
             {path: 'progress' , component: ProgressComponent, data:{titulo:'Progress'} },
             {path: 'graficas1', component: Graficas1Component, data:{titulo:'Gráficas'} },
             {path: 'promesas', component: PromesasComponent,  data:{titulo:'Promesas'} },
@@ -43,8 +44,7 @@ const pagesRoutes: Routes = [
             {path: 'medico/:id', component: MedicoComponent,  data:{titulo:' Actualizar Medico'} },
             {path: '', redirectTo: '/dashboard', pathMatch : 'full'}
 
-        ]
-    }
+    
 ];
 
 export const PAGES_ROUTES = RouterModule.forChild(pagesRoutes);

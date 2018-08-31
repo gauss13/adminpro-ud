@@ -16,11 +16,35 @@ export class UsuarioService {
   // Propiedades de la clase, para saber si el usuario esta o no autenticado
   usuario: Usuario;
   token: string;
-menu: any[]= [];
+  menu: any[]= [];
   constructor(public http: HttpClient, public router: Router,
   public _subirArchivoService: SubirArchivoService) {
     // lo ejecutamos cada ves que el servicio de inicializa
     this.cargarStorage();
+  }
+
+
+  renuevaToken() {
+    let url = URL_SERVICIOS + '/login/renuevatoken';
+    url += '?token=' + this.token;
+
+  // no hacemos la suscripcion aqui, solo retornamos la peticion
+    return this.http.get(url).pipe(
+      map((resp: any) => {
+        this.token = resp.token;
+        localStorage.setItem('token', this.token);
+        return true;
+      })
+      ,
+      catchError( err => {
+
+        this.router.navigate(['/login']);
+
+        swal('No se pudo renovar el token','No fue posible renovar token','error');
+  
+        return throwError(err);
+       } )
+    );
   }
 
   estaLogueado() {
